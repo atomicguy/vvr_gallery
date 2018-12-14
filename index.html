@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>VVR</title>
+    <meta name="description" content="VintageVR">
+    <script src="https://aframe.io/releases/0.8.2/aframe.min.js"></script>
+    <script src="https://npmcdn.com/aframe-animation-component@3.0.1"></script>
+    <script src="https://unpkg.com/aframe-event-set-component@^4.0.0/dist/aframe-event-set-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-layout-component@4.2/dist/aframe-layout-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-template-component@^3.1.1/dist/aframe-template-component.min.js"></script>
+    <script src="https://rawgit.com/feiss/aframe-environment-component/master/dist/aframe-environment-component.min.js"></script>
+    <script src="https://rawgit.com/atomicguy/aframe-scrim-component/master/dist/aframe-scrim-component.min.js"></script>
+    <script src="aframe-stereo-component.min.js"></script>
+    <script src="set-image.js"></script>
+  </head>
+   <body>
+    <a-scene>
+      <a-assets>
+        <audio id="click-sound" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/audio/click.ogg"></audio>
+        <img id="left" crossorigin="anonymous" src="https://cdn.glitch.com/ad49ac53-9304-4118-b533-b7e1769174f9%2FL_unkown2.jpg?1531583991886">
+        <img id="right" crossorigin="anonymous" src="https://cdn.glitch.com/ad49ac53-9304-4118-b533-b7e1769174f9%2FR_unkown2.jpg?1531584004055">
+        <img id="left-1" crossorigin="anonymous" src="https://cdn.glitch.com/ad49ac53-9304-4118-b533-b7e1769174f9%2FL_unkown17.jpg?1531655976437">
+        <img id="right-1" crossorigin="anonymous" src="https://cdn.glitch.com/ad49ac53-9304-4118-b533-b7e1769174f9%2FR_unkown17.jpg?1531655985987">
+        <img id="left-2" crossorigin="anonymous" src="https://cdn.glitch.com/ad49ac53-9304-4118-b533-b7e1769174f9%2FL_unkown1243.jpg?1531687141394">
+        <img id="right-2" crossorigin="anonymous" src="https://cdn.glitch.com/ad49ac53-9304-4118-b533-b7e1769174f9%2FR_unkown1243.jpg?1531687168262">
+        
+        <!-- Image link template to be reused. -->
+        <script id="link" type="text/html">
+          <a-entity class="link"
+            geometry="primitive: plane; height: 1; width: 2"
+            material="shader: flat; color: #4F70C2"
+            text="wrapCount: 10; value: ${text}; font: mozillavr; baseline: center; align: center"
+            event-set__1="_event: mousedown; scale: 1 1 1"
+            event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+            event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+            event-set__4="_event: mouseleave; scale: 1 1 1"
+            set-image="on: click; targetL: #show-l; srcL: ${srcl}; targetR: #show-r; srcR: ${srcr}"
+            sound="on: click; src: #click-sound">
+          </a-entity>
+        </script>
+        
+        <script id="textbox" type="text/html">
+          <a-entity
+              geometry="primitive: plane; width: auto; height: auto"
+              material="color: blue"
+              text="width: 2; wrapCount: 10; value: ${text}; font: mozillavr"
+              position="-3 0 -4"
+              rotation="0 35 0">
+          </a-entity>
+        </script>
+        
+      </a-assets>
+      
+      <a-entity environment="ground: noise; 
+                             lightPosition: 0 1.5 1.8; 
+                             skyType: color;
+                             skyColor: #171A24;
+                             groundColor: #361C10;
+                             groundColor2: #3C2112;
+                             groundTexture: squares;
+                             dressing: pyramids;
+                             dressingScale: 5">
+      </a-entity>
+      
+      <!-- Image Showcase -->
+      <a-entity position="0 2.1 0" rotation="0 -35 0">
+        <a-plane 
+                 id="show-l"
+                 position="0 0 -5"
+                 rotation="-0 0 0"
+                 width="4" height="4"
+                 material="flat"
+                 src="#left"
+                 stereo="eye:left">
+        </a-plane>
+        <a-plane 
+                 scrim
+                 id="show-r"
+                 position="0 0 -5"
+                 rotation="-0 0 0"
+                 width="4" height="4"
+                 material="flat"
+                 src="#right"
+                 stereo="eye:right">
+        </a-plane>
+      </a-entity>
+
+      <!-- Image links. -->
+      <a-entity id="links" layout="type: box; margin: 1.5" position="0 1 -7" rotation="0 0 0">
+        <a-entity template="src: #link" data-srcl="#left-2" data-srcr="#right-2" data-text="country lane"></a-entity>
+        <a-entity template="src: #link" data-srcl="#left" data-srcr="#right" data-text="trees"></a-entity>
+        <a-entity template="src: #link" data-srcl="#left-1" data-srcr="#right-1" data-text="farmers pick pinapples"></a-entity>
+      </a-entity>      
+
+      <!-- Camera + cursor. -->
+      <a-entity position="0 1.8 0">
+        <a-entity camera look-controls stereocam="eye:both">
+          <a-cursor id="cursor"
+            animation__click="property: scale; startEvents: click; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150"
+            animation__fusing="property: fusing; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500"
+            event-set__1="_event: mouseenter; color: #FA6B3B"
+            event-set__2="_event: mouseleave; color: #787591"
+            fuse="true"
+            raycaster="objects: .link"></a-cursor>
+        </a-entity>
+      </a-entity>
+    </a-scene>
+  </body>
+</html>
